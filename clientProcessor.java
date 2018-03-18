@@ -3,6 +3,7 @@ public class clientProcessor {
     private String nom;
     private int codeLicence;
     private int nombreMotTrouve = 0;
+    private int score=0;
 
     public void ajouterMotTrouve() {
         nombreMotTrouve++;
@@ -21,10 +22,25 @@ public class clientProcessor {
         super();
     }
 
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
     public clientProcessor(String nom, int codeLicence) {
         super();
         this.nom = nom;
         this.codeLicence = codeLicence;
+
+    }
+    public clientProcessor(String nom, int codeLicence, int score) {
+        super();
+        this.nom = nom;
+        this.codeLicence = codeLicence;
+        this.score=score;
     }
 
     public String getNom() {
