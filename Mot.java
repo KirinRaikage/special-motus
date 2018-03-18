@@ -33,7 +33,7 @@ public class Mot {
         }
         this.combinaison = sb.toString();
     }
-    public boolean lettreDansCombi(String combiClient, char lettre) {
+    public boolean lettreDansCombi(String combiClient, char lettre) { //Vérifie si la lettre est présente dans la proposition du client
         return combiClient.indexOf(lettre) != -1;
     }
 
