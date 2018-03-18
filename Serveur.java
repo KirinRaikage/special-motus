@@ -1,4 +1,6 @@
 
+import com.sun.xml.internal.bind.v2.TODO;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -33,16 +35,23 @@ public class Serveur {
 	 * ServeurProcessor
 	 */
 	public static void main(String[] args) throws Exception {
-		System.out.println("The chat server is running.");
-		ServerSocket listener = new ServerSocket(PORT);
-		try {
-			while (true) {
-				new Handler(listener.accept()).start();
-			}
-		} finally {
-			listener.close();
-		}
-	}
+        System.out.println("The chat server is running.");
+        ServerSocket listener = new ServerSocket(PORT);
+        try {
+            while (true) {
+                new Handler(listener.accept()).start();
+            }
+        } finally {
+            listener.close();
+        }
+    }
+    public void clearAll() {
+	    if (clientsInscrits.isEmpty()) {
+            for (int i = 0; i < clientsInscrits.size() ; i++) {
+                clientsInscrits.clear();
+            }
+        }
+    }
 
 	/**
 	 * Cette classe communique avec un unique client.
@@ -105,6 +114,23 @@ public class Serveur {
 			}
 			return false;
 		}
+		public int calculScorePartie(long tempsDepart) {
+		  int score=0;
+          long duree=((System.currentTimeMillis()-tempsDepart)/1000)/60; //Variable qui stocke la durée stockée en minutes (conformément au CdC)
+          if (duree < 1) {
+              score = 10;
+          }
+          else if (duree > 1 && duree < 3) {
+              score = 5;
+          }
+          else if (duree > 3 && duree < 5) {
+              score = 3;
+          }
+          else {
+              score = 1;
+          }
+          return score;
+        }
 
 		public void run() {
 			try {
@@ -115,6 +141,7 @@ public class Serveur {
 				boolean estPasConnecte;
 				boolean mdpCorrect;
 				int code = 0;
+				long tempsActuel = 0; //Variable qui stocke le temps actuel (en ms)
 
 				// instanciation des objets qui nous servirons au dialogue avec notre client
 				in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -227,8 +254,10 @@ public class Serveur {
 					// tant que l'utilisateur n'a pas trouv� le mot
 					motNonTrouve = true;
 					while (motNonTrouve) {
+					    tempsActuel=System.currentTimeMillis(); //Stocke le temps actuel
+
 						System.out.println("attente d'un mot");
-						String message_entrant = in.readLine().toUpperCase();
+						String message_entrant = in.readLine().toUpperCase(); //Convertit en majuscules
 						if (message_entrant.startsWith("TENTATIVE")) {
 							motUtilisateur = message_entrant.substring(9);
 							lettreBienPlacee = motInconnu.nbBienPlace(motUtilisateur);
@@ -238,8 +267,12 @@ public class Serveur {
 									.println("bien placee: " + lettreBienPlacee + " et mal placee " + lettreMalPlacee);
 							if (lettreBienPlacee == 5) {
 								out.println("GAGNE");
-								// il faudra modifier le score du joueur
+                                int scoreFinal = calculScorePartie(tempsActuel);
+                                //TODO Il faudra modifier le score du joueur
+								for (clientProcessor l : clientsInscrits) {
+									l.setScore(l.getScore()+scoreFinal);
 
+								}
 								for (clientProcessor l : clientsInscrits) {
 									if (l.getCodeLicence() == code) {
 										l.ajouterMotTrouve();
