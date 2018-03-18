@@ -123,7 +123,7 @@ public class Serveur {
           else if (duree > 1 && duree < 3) {
               score = 5;
           }
-          else if (duree > 3 && duree < 5) {
+          else if (duree >= 3 && duree <= 5) {
               score = 3;
           }
           else {
@@ -267,10 +267,13 @@ public class Serveur {
 									.println("bien placee: " + lettreBienPlacee + " et mal placee " + lettreMalPlacee);
 							if (lettreBienPlacee == 5) {
 								out.println("GAGNE");
-                                int scoreFinal = calculScorePartie(tempsActuel);
+                                int scorePartie = calculScorePartie(tempsActuel);
                                 //TODO Il faudra modifier le score du joueur
 								for (clientProcessor l : clientsInscrits) {
-									l.setScore(l.getScore()+scoreFinal);
+								    if (l.getCodeLicence() == code) {
+                                        l.setScore(l.getScore()+scorePartie);
+                                        out.print("AFFICHER_SCORE");
+                                    }
 
 								}
 								for (clientProcessor l : clientsInscrits) {
